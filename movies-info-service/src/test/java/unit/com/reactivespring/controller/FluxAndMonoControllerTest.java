@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,4 +26,18 @@ class FluxAndMonoControllerTest {
                 .expectBodyList(Integer.class)
                 .hasSize(3);
     }
+
+    @Test
+    void flux_approach2() {
+        var flux = webTestClient.get()
+                .uri("/flux")
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .returnResult(Integer.class)
+                .getResponseBody();
+        StepVerifier.create(flux).expectNext(1,2,3).verifyComplete();
+    }
+
+
 }
