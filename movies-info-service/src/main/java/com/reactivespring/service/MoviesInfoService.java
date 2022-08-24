@@ -25,4 +25,15 @@ public class MoviesInfoService {
     public Mono<MovieInfo> getMovieInfoById(String id) {
         return movieInfoRepository.findById(id);
     }
+
+    public Mono<MovieInfo> updateMovieInfo(MovieInfo updatedMovieInfo, String id) {
+        return movieInfoRepository.findById(id)
+                .flatMap(movieInfo -> {
+                    movieInfo.setCast(updatedMovieInfo.getCast());
+                    movieInfo.setName(updatedMovieInfo.getName());
+                    movieInfo.setRelease_date(updatedMovieInfo.getRelease_date());
+                    movieInfo.setYear(updatedMovieInfo.getYear());
+                    return movieInfoRepository.save(movieInfo);
+                });
+    }
 }
