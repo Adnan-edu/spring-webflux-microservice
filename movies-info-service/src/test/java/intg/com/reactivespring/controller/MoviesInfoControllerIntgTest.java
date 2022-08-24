@@ -77,6 +77,25 @@ class MoviesInfoControllerIntgTest {
                 .hasSize(3);
     }
 
+    @Test
+    void getMovieInfoById() {
+        var id = "abc";
+        webTestClient
+                .get()
+                .uri(MOVIES_INFO_URL + "/{id}", id)
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                /*.expectBody(MovieInfo.class)
+                .consumeWith(movieInfoEntityExchangeResult -> {
+                    var movieInfo = movieInfoEntityExchangeResult.getResponseBody();
+                    assert movieInfo != null;
+                })*/
+                .expectBody()
+                .jsonPath("$.name").isEqualTo("Dark Knight Rises");
+
+    }
+
     @AfterEach
     void tearDown() {
     }
