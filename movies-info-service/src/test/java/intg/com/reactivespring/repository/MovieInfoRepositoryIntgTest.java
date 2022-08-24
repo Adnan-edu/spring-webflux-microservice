@@ -47,6 +47,22 @@ class MovieInfoRepositoryIntgTest {
 
     }
 
+    @Test
+    void findById(){
+        //given
+
+        //when
+        var moviesMono = movieInfoRepository.findById("abc").log();
+
+        //then
+        StepVerifier.create(moviesMono)
+                .assertNext(movieInfo -> {
+                    assertEquals("Dark Knight Rises", movieInfo.getName());
+                })
+                .verifyComplete();
+
+    }
+
     @AfterEach
     void tearDown(){
         movieInfoRepository.deleteAll().block();
