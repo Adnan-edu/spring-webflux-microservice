@@ -116,6 +116,17 @@ class MoviesInfoControllerIntgTest {
                     assertEquals("Dark Knight Rises 1", movieInfo.getName());
                 });
     }
+    @Test
+    void deleteMovieInfoById() {
+        var id = "abc";
+
+        webTestClient
+                .delete()
+                .uri(MOVIES_INFO_URL + "/{id}", id)
+                .exchange()
+                .expectStatus()
+                .isNoContent();
+    }
 
     @AfterEach
     void tearDown() {
