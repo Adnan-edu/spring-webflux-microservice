@@ -76,6 +76,36 @@ class MovieInfoRepositoryIntgTest {
                 });
 
     }
+    @Test
+    void updateMovieInfo() {
+
+        var movieInfo = movieInfoRepository.findById("abc").block();//Since we are using block this is going to give us actual type.
+                                                                               // It is not going to have Mono or Flux anymore
+        movieInfo.setYear(2021);
+
+        var savedMovieInfo = movieInfoRepository.save(movieInfo);
+
+        StepVerifier.create(savedMovieInfo)
+                .assertNext(movieInfo1 -> {
+                    assertNotNull(movieInfo1.getMovieInfoId());
+                    assertEquals(2021, movieInfo1.getYear());
+                });
+
+    }
+
+    @Test
+    void deleteMovieInfo() {
+
+        movieInfoRepository.deleteById("abc").block();
+
+        var movieInfos = movieInfoRepository.findAll();
+
+        StepVerifier.create(movieInfos)
+                .expectNextCount(2)
+                .verifyComplete();
+
+    }
+
     @AfterEach
     void tearDown(){
         movieInfoRepository.deleteAll().block();
