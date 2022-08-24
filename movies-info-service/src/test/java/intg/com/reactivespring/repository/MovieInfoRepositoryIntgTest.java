@@ -62,7 +62,20 @@ class MovieInfoRepositoryIntgTest {
                 .verifyComplete();
 
     }
+    @Test
+    void saveMovieInfo() {
 
+        var movieInfo = new MovieInfo(null, "Batman Begins1",
+                2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
+
+        var savedMovieInfo = movieInfoRepository.save(movieInfo);
+
+        StepVerifier.create(savedMovieInfo)
+                .assertNext(movieInfo1 -> {
+                    assertNotNull(movieInfo1.getMovieInfoId());
+                });
+
+    }
     @AfterEach
     void tearDown(){
         movieInfoRepository.deleteAll().block();
