@@ -116,6 +116,22 @@ class MoviesInfoControllerIntgTest {
                     assertEquals("Dark Knight Rises 1", movieInfo.getName());
                 });
     }
+
+    @Test
+    void updateMovieInfo_notfound() {
+        var id = "def";
+        var updatedMovieInfo = new MovieInfo(null, "Dark Knight Rises 1",
+                2013, List.of("Christian Bale1", "Tom Hardy1"), LocalDate.parse("2012-07-20"));
+
+        webTestClient
+                .put()
+                .uri(MOVIES_INFO_URL + "/{id}", id)
+                .bodyValue(updatedMovieInfo)
+                .exchange()
+                .expectStatus()
+                .isNotFound();
+    }
+
     @Test
     void deleteMovieInfoById() {
         var id = "abc";
