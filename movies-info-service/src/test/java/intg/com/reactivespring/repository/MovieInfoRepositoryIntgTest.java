@@ -106,6 +106,18 @@ class MovieInfoRepositoryIntgTest {
 
     }
 
+    @Test
+    void findByYear(){
+        //given
+
+        //when
+        var moviesFlux = movieInfoRepository.findByYear(2005).log();
+
+        //then
+        StepVerifier.create(moviesFlux).expectNextCount(1).verifyComplete();
+
+    }
+
     @AfterEach
     void tearDown(){
         movieInfoRepository.deleteAll().block();
