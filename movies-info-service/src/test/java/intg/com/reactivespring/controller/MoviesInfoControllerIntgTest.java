@@ -133,6 +133,17 @@ class MoviesInfoControllerIntgTest {
     }
 
     @Test
+    void getMovieInfoById_notfound() {
+        var id = "def";
+        webTestClient
+                .get()
+                .uri(MOVIES_INFO_URL + "/{id}", id)
+                .exchange()
+                .expectStatus()
+                .isNotFound();
+    }
+
+    @Test
     void deleteMovieInfoById() {
         var id = "abc";
 
