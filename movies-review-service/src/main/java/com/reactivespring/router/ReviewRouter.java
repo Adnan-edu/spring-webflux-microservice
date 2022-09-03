@@ -14,12 +14,14 @@ public class ReviewRouter {
     @Bean
     public RouterFunction<ServerResponse> reviewsRoute(ReviewsHandler reviewsHandler){
         return route()
-                .nest(path("/v1/reviews"), builder ->
-                        builder
-                                .GET("", reviewsHandler::getReviews)
-                                .POST("", reviewsHandler::addReview)
-                                .PUT("/{id}", reviewsHandler::updateReview)
-                                .DELETE("/{id}", reviewsHandler::deleteReview))
+                .nest(path("/v1/reviews"), builder -> {
+                    builder
+                            .GET("", reviewsHandler::getReviews)
+                            .POST("", reviewsHandler::addReview)
+                            .PUT("/{id}", reviewsHandler::updateReview)
+                            .DELETE("/{id}", reviewsHandler::deleteReview)
+                            .GET("/stream", request -> reviewsHandler.getReviewsStream(request));
+                })
                 .GET("/v1/helloworld", (request -> ServerResponse.ok().bodyValue("HelloWorld")))
                 .GET("/v1/greeting/{name}", (request -> ServerResponse.ok().bodyValue("hello " + request.pathVariable("name"))))
                 .GET("/v1/error", (request -> {

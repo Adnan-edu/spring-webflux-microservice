@@ -7,6 +7,7 @@ import com.reactivespring.exception.ReviewNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
@@ -14,7 +15,9 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 
+import javax.print.attribute.standard.Media;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.stream.Collectors;
@@ -24,6 +27,9 @@ import java.util.stream.Collectors;
 public class ReviewsHandler {
 
     private ReviewReactiveRepository reviewReactiveRepository;
+
+    Sinks.Many<Review> reviewsSink = Sinks.many().replay().latest();
+
     //private ReviewValidator reviewValidator;
 
     @Autowired
@@ -57,6 +63,9 @@ public class ReviewsHandler {
         return serverRequest.bodyToMono(Review.class)
                 .doOnNext(this::validate)
                 .flatMap(review -> reviewReactiveRepository.save(review))
+                .doOnNext(review->{
+                    reviewsSink.tryEmitNext(review);
+                })
                 .flatMap(savedReview ->
                         ServerResponse.status(HttpStatus.CREATED)
                                 .bodyValue(savedReview));
@@ -116,5 +125,12 @@ public class ReviewsHandler {
                 .flatMap(review -> reviewReactiveRepository.deleteById(reviewId)
                         .flatMap(rev -> ServerResponse.noContent().build()))
                 .then(ServerResponse.noContent().build());
+    }
+
+    public Mono<ServerResponse> getReviewsStream(ServerRequest request) {
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_NDJSON)
+                .body(reviewsSink.asFlux(), Review.class)
+                .log();
     }
 }
