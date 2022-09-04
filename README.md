@@ -138,6 +138,17 @@ Here we have used mocking library called Mockito.
 ![](images/image-7.png)
 
 
+# Server Sent Events (SSE)
+
+![](images/sse.png)
+
+Here we have client and the server. The server here basically the API. The client here makes an call and request for some data. Once a call is made the response here is sent in the form of events. Basically a form of non blocking stream of events. Meaning the data is sent as it is available. Some of the examples are if we have used uber, once we book the ride the driver location is continuously updated as the driver reaches his/her location. That’s the fundamental idea of server sent events (SSE). In this case server is going to continuously notify the client as new events arrive, for the particular connection. So the data flow is unidirectional once the connection is established between the client and server. Server will only interact with the client and client has no way to interact with server for the particular connection. 
+
+From a connection standpoint the server needs to support long live client connection. So as a whole this is what SSE or server sent events mean and the whole concept can be implemented very easily using spring webflux. We have developed a real time use case in our project, anytime a new movie info is added, we want to expose the data to the client as a server sent event. In MoviesInfoController, anytime we add a new movie, publish that movie to something and then we have exposed that movie to a rest endpoint. There is a handy api available which is going to behave as a publisher and subscriber at the same time. Sink is a class which we can use inorder to make that behave as a publisher and subscriber. Which means we are going to publish a MovieInfo and then it is going to allow us to subscribe to the movie info and have that MovieInfo available to the rest endpoint. Sinks.One means you can publish one event and Sinks.Many means you can publish many events. Using sink we can manually trigger the signals. Once the MovieInfo is added we can manually trigger that movie info as a event using the emit next or try emit function. We can use one of this approaches inorder to create a sink and then publish the reactive streams events. 
+
+We have created another endpoint attaching the subscriber asFlux() which is a method of sink class. When client connects to “/movieInfos/stream”, this is automatically subscribe to that particular sink and then continuously send those events. 
+
+
 
 
 
